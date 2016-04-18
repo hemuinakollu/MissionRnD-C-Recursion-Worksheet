@@ -16,8 +16,8 @@ Maze of order 4x4:
 In this case, there exists a connected path:
 1
 1	1
-	1		1
-	1	1	1
+1		1
+1	1	1
 
 Since there is a connected path, your function has to return 1.
 If a path doesn't exist between two co-ordinates then return 0.
@@ -33,10 +33,80 @@ Hint : You can use path_exists as a wrapper function for your original recursive
 more parameters .
 */
 
+
 #include<stdlib.h>
+
+int valid_coordinates(int x1, int y1, int rows, int columns)
+{
+	if (x1 < 0 || y1 < 0 || x1>rows || y1>columns)
+		return 1;
+	else
+	{
+		return 0;
+	}
+}
+int pathexists(int *maze, int x1, int y1, int **sol, int x2, int y2, int rows, int columns)
+{
+	if (valid_coordinates(x1,y1,rows,columns))
+		return 0;
+
+	if (*((maze + x2*columns) + y2) == 0)
+		return 0;
+
+	if (x1 == x2 && y1 == y2)
+		return 1;
+
+	if (*((maze + x1*columns) + y1) != 1 || sol[x1][y1] != 0)
+		return 0;
+
+	sol[x1][y1] = 1;
+	
+	if (pathexists(maze, x1, y1 - 1, sol, x2, y2, rows, columns) == 1)
+		return 1;
+
+	if (pathexists(maze, x1, y1 + 1, sol, x2, y2, rows, columns) == 1)
+		return 1;
+
+	if (pathexists(maze,x1 + 1, y1,sol, x2, y2,rows,columns) == 1)
+		return 1;
+
+	
+	if (pathexists(maze, x1 - 1, y1,sol, x2, y2,rows, columns) == 1)
+		return 1;
+
+	
+	sol[x1][y1] = 0;
+	
+	return 0;
+}
+
+
 
 
 int path_exists(int *maze, int rows, int columns, int x1, int y1, int x2, int y2)
 {
-	return 1;
+	if (rows < 0 || columns < 0 || (x1 < 0 ) || (x2 < 0 ) || (y1 < 0 ) || (y2 < 0))
+	{
+		return 0;
+	}
+	else
+	{
+		int **sol = (int**)malloc(rows*sizeof(int*));
+		for (int k = 0; k < rows; k++)
+			sol[k] = (int*)malloc(columns*sizeof(int));
+		for (int i = 0; i < rows; i++)
+			for (int j = 0; j < columns; j++)
+				sol[i][j] = 0;
+
+		if (pathexists(maze, x1, y1, sol, x2, y2, rows, columns) == 1)
+		{
+
+			return 1;
+		}
+		else{
+			return 0;
+		}
+
+
+	}
 }
